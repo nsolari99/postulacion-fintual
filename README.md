@@ -74,7 +74,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 3. Install dependencies:
 ```bash
-pip install fastapi "uvicorn[standard]" sqlalchemy aiosqlite pydantic yfinance python-dateutil
+pip install fastapi "uvicorn[standard]" sqlalchemy aiosqlite pydantic yfinance python-dateutil greenlet
 ```
 
 ## Running the Application
