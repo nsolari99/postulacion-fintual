@@ -1,0 +1,36 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Data Models
+
+## Database Models
+
+The application uses SQLite with SQLAlchemy ORM. The main models are defined in [models.py](mdc:models.py):
+
+### Portfolio
+- **ID**: Unique identifier (primary key)
+- **Name**: Portfolio name
+- **Holdings**: One-to-many relationship with Holding model
+
+### Holding
+- **ID**: Unique identifier (primary key)
+- **Portfolio ID**: Foreign key to Portfolio
+- **Symbol**: Stock ticker symbol
+- **Quantity**: Number of shares
+
+### StockPrice
+- **ID**: Unique identifier (primary key)
+- **Symbol**: Stock ticker symbol
+- **Date**: Price date
+- **Adjusted_Close**: Adjusted closing price
+
+## Pydantic Schemas
+
+Request and response validation models are defined in [schemas.py](mdc:schemas.py):
+
+- **PortfolioCreate**: Schema for creating a new portfolio
+- **HoldingCreate**: Schema for holdings within a portfolio
+- **Portfolio**: Schema for portfolio responses
+- **ProfitResponse**: Schema for profit calculation responses

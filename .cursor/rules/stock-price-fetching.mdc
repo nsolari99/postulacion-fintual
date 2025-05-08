@@ -1,0 +1,27 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Stock Price Fetching
+
+## yfinance Integration
+
+The application uses [yfinance](mdc:https:/pypi.org/project/yfinance) to fetch historical stock prices:
+
+- **Implementation**: [helpers.py](mdc:helpers.py)
+- **Data Source**: Yahoo Finance API through yfinance
+- **Price Type**: Adjusted close prices only
+
+## Caching Strategy
+
+To avoid repeated API calls, the application:
+
+1. First checks if the requested stock price exists in the SQLite database
+2. Only fetches from the API if the price is not already cached
+3. Stores fetched prices in the StockPrice table for future use
+
+## Date Handling
+
+- For non-trading days (weekends, holidays), the application finds the closest previous valid trading day
+- All date inputs use the format YYYY-MM-DD

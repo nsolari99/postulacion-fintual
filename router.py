@@ -3,9 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from dateutil.parser import parse as parse_date
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select
+from typing import List
 
 from models import Portfolio, Holding
-from schemas import PortfolioCreate, ProfitResponse
+from schemas import PortfolioCreate, ProfitResponse, PortfolioResponse, HoldingCreate, HoldingResponse
 from helpers import fetch_price, annualized_return
 from database import get_session, async_engine, Base
 
@@ -69,3 +70,52 @@ async def portfolio_profit(
         profit=round(profit, 2),
         annualized_return=round(ar, 4),
     )
+
+# 3. Get all portfolios ---------------------------------------------------------
+@app.get("/portfolios", response_model=List[PortfolioResponse])
+async def get_all_portfolios(session: AsyncSession = Depends(get_session)):
+    # Fetch all portfolios with their holdings
+    stmt = select(Portfolio).options(selectinload(Portfolio.holdings))
+    result = await session.execute(stmt)
+    portfolios = result.scalars().all()
+    
+    return portfolios
+
+# 4. Add holding to portfolio ---------------------------------------------------
+@app.post("/portfolio/{portfolio_id}/holding", response_model=PortfolioResponse)
+async def add_holding(
+    portfolio_id: int,
+    holding: HoldingCreate,
+    session: AsyncSession = Depends(get_session)
+):
+    # Find the portfolio
+    stmt = select(Portfolio).where(Portfolio.id == portfolio_id).options(selectinload(Portfolio.holdings))
+    result = await session.execute(stmt)
+    portfolio = result.scalars().first()
+    
+    if not portfolio:
+        raise HTTPException(404, "Portfolio not found")
+    
+    # Check if holding with same symbol already exists
+    for existing_holding in portfolio.holdings:
+        if existing_holding.symbol == holding.symbol.upper():
+            # Update quantity instead of creating new
+            existing_holding.quantity += holding.quantity
+            await session.commit()
+            await session.refresh(portfolio)
+            return portfolio
+    
+    # Add new holding
+    new_holding = Holding(
+        portfolio_id=portfolio_id,
+        symbol=holding.symbol.upper(),
+        quantity=holding.quantity
+    )
+    
+    session.add(new_holding)
+    await session.commit()
+    
+    # Refresh portfolio to include the new holding
+    await session.refresh(portfolio)
+    
+    return portfolio

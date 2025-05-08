@@ -1,0 +1,24 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# FastAPI Portfolio Tracker
+
+This project is a FastAPI application that tracks stock portfolios and calculates profit and annualized returns.
+
+## Key Components
+
+- [main.py](mdc:main.py) - Database configuration and application entry point
+- [database.py](mdc:database.py) - Database connection setup
+- [models.py](mdc:models.py) - SQLAlchemy database models for Portfolio, Holding, and StockPrice
+- [schemas.py](mdc:schemas.py) - Pydantic models for request/response validation
+- [router.py](mdc:router.py) - FastAPI route handlers for all endpoints
+- [helpers.py](mdc:helpers.py) - Utility functions for fetching stock prices and calculating returns
+
+## Main Features
+
+- Portfolio creation and management
+- Stock price fetching using yfinance
+- Profit and annualized return calculations
+- SQLite database for persistent storage

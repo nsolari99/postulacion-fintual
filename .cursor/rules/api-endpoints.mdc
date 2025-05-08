@@ -1,0 +1,39 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# API Endpoints
+
+## Portfolio Management
+
+### Create Portfolio
+- **Endpoint**: POST /portfolio
+- **Implementation**: [router.py](mdc:router.py)
+- **Request Body**: Portfolio with name and holdings (ticker symbols and quantities)
+- **Response**: Portfolio with generated ID
+
+### Get All Portfolios
+- **Endpoint**: GET /portfolios
+- **Implementation**: [router.py](mdc:router.py)
+- **Response**: List of all portfolios with their holdings
+
+### Add Holding to Portfolio
+- **Endpoint**: POST /portfolio/{portfolio_id}/holding
+- **Implementation**: [router.py](mdc:router.py)
+- **Request Body**: Holding with symbol and quantity
+- **Response**: Updated portfolio with all holdings
+- **Note**: If the symbol already exists in portfolio, quantity is added to existing holding
+
+### Calculate Portfolio Profit
+- **Endpoint**: GET /portfolio/{portfolio_id}/profit
+- **Implementation**: [router.py](mdc:router.py) 
+- **Query Parameters**:
+  - start_date (YYYY-MM-DD)
+  - end_date (YYYY-MM-DD)
+- **Response**: Portfolio profit information including start value, end value, profit, and annualized return
+
+## Calculations
+
+- Profit calculation logic is in [helpers.py](mdc:helpers.py)
+- Annualized Return formula: ((end_value / start_value) ^ (365/days_between)) - 1
